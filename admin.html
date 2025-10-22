@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Toko Ida Barokah</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #edf2f7;
+      margin: 0;
+      padding: 0;
+      color: #2d3748;
+    }
+
+    header {
+      background: linear-gradient(135deg, #2b6cb0, #3182ce);
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .login-box, .admin-panel {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 2rem;
+      width: 90%;
+      max-width: 500px;
+      margin: 2rem auto;
+    }
+
+    input, button, textarea {
+      width: 100%;
+      padding: 0.7rem;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      border: 1px solid #cbd5e0;
+      font-size: 1rem;
+    }
+
+    button {
+      background: #2b6cb0;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #2c5282;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #2b6cb0;
+    }
+
+    .product-item {
+      background: #f7fafc;
+      padding: 1rem;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+    }
+
+    .product-item button {
+      width: auto;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      margin-right: 0.3rem;
+    }
+
+    .promo-box {
+      background: #faf089;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>Admin Panel - Toko Ida Barokah</header>
+
+  <div class="login-box" id="loginBox">
+    <h2>Login Admin</h2>
+    <input type="password" id="password" placeholder="Masukkan Password" />
+    <button onclick="login()">Login</button>
+    <p id="loginError" style="color:red;text-align:center;display:none;">Password salah!</p>
+  </div>
+
+  <div class="admin-panel" id="adminPanel" style="display:none;">
+    <h2>Kelola Produk</h2>
+    
+    <div class="promo-box">
+      <h3>Promo Saat Ini</h3>
+      <textarea id="promoText" rows="2"></textarea>
+      <button onclick="simpanPromo()">💾 Simpan Promo</button>
+    </div>
+
+    <h3>Tambah Produk Baru</h3>
+    <input type="text" id="nama" placeholder="Nama Produk" />
+    <input type="number" id="harga" placeholder="Harga (Rp)" />
+    <input type="text" id="satuan" placeholder="Satuan (pcs, kg, dll)" />
+    <button onclick="tambahProduk()">➕ Tambah Produk</button>
+
+    <h3>Daftar Produk</h3>
+    <div id="productList"></div>
+  </div>
+
+  <script>
+    const PASSWORD = "idabarokah";
+
+    function login() {
+      const input = document.getElementById("password").value;
+      if (input === PASSWORD) {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+        loadData();
+      } else {
+        document.getElementById("loginError").style.display = "block";
+      }
+    }
+
+    function loadData() {
+      const products = JSON.parse(localStorage.getItem("products")) || [];
+      const promo = localStorage.getItem("promoText") || "";
+      document.getElementById("promoText").value = promo;
+
+      const list = document.getElementById("productList");
+      list.innerHTML = "";
+      products.forEach((p, i) => {
+        const div = document.createElement("div");
+        div.className = "product-item";
+        div.innerHTML = `
+          <b>${p.nama}</b><br>
+          Harga: Rp ${p.harga.toLocaleString()} | Satuan: ${p.satuan}<br>
+          <button onclick="editProduk(${i})">✏️ Edit</button>
+          <button onclick="hapusProduk(${i})">🗑️ Hapus</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function simpanPromo() {
+      const promo = document.getElementById("promoText").value;
+      localStorage.setItem("promoText", promo);
+      alert("Promo berhasil disimpan!");
+    }
+
+    function tambahProduk() {
+      const nama = document.getElementById("nama").value.trim();
+      const harga = parseInt(document.getElementById("harga").value);
+      const satuan = document.getElementById("satuan").value.trim();
+
+      if (!nama || !harga || !satuan) {
+        alert("Isi semua kolom terlebih dahulu!");
+        return;
+      }
+
+      const products = JSON.parse(localStorage.getItem("products")) || [];
+      products.push({ nama, harga, satuan });
+      localStorage.setItem("products", JSON.stringify(products));
+
+      document.getElementById("nama").value = "";
+      document.getElementById("harga").value = "";
+      document.getElementById("satuan").value = "";
+      loadData();
+    }
+
+    function hapusProduk(index) {
+      if (confirm("Yakin ingin menghapus produk ini?")) {
+        const products = JSON.parse(localStorage.getItem("products")) || [];
+        products.splice(index, 1);
+        localStorage.setItem("products", JSON.stringify(products));
+        loadData();
+      }
+    }
+
+    function editProduk(index) {
+      const products = JSON.parse(localStorage.getItem("products")) || [];
+      const p = products[index];
+
+      const namaBaru = prompt("Ubah nama produk:", p.nama);
+      const hargaBaru = prompt("Ubah harga:", p.harga);
+      const satuanBaru = prompt("Ubah satuan:", p.satuan);
+
+      if (namaBaru && hargaBaru && satuanBaru) {
+        products[index] = { nama: namaBaru, harga: parseInt(hargaBaru), satuan: satuanBaru };
+        localStorage.setItem("products", JSON.stringify(products));
+        loadData();
+      }
+    }
+  </script>
+</body>
+</html>
