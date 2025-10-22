@@ -1,116 +1,89 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Toko Ida Barokah</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toko Ida Barokah 🛍️</title>
   <style>
     body {
-      font-family: "Poppins", sans-serif;
-      background: #f4f6f9;
+      font-family: 'Poppins', sans-serif;
       margin: 0;
-      padding: 0;
+      background: #f8fafc;
       color: #333;
     }
-
     header {
-      background: linear-gradient(135deg, #2b6cb0, #3182ce);
+      background: linear-gradient(90deg, #007bff, #00bfff);
       color: white;
       text-align: center;
-      padding: 1.5rem;
-      font-size: 1.8rem;
-      font-weight: 600;
+      padding: 20px;
+      font-size: 1.5em;
+      font-weight: bold;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
-
     .promo {
-      background: #f6ad55;
-      color: #2d3748;
-      margin: 1rem auto;
-      padding: 1rem;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 800px;
+      background: #ffefc6;
+      color: #d48806;
       text-align: center;
-      font-weight: 500;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 10px;
+      font-weight: bold;
+      border-bottom: 2px solid #ffd666;
     }
-
     .container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      padding: 1rem;
-      width: 90%;
-      margin: auto;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      padding: 20px;
     }
-
     .card {
       background: white;
-      border-radius: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       text-align: center;
-      transition: 0.3s;
+      padding: 15px;
+      transition: transform 0.2s;
     }
-
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    .card:hover { transform: scale(1.03); }
+    .card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
     }
-
-    .card h3 {
-      margin: 0.5rem 0;
-      color: #2b6cb0;
-    }
-
-    .card p {
-      margin: 0.2rem 0;
-    }
-
     footer {
-      text-align: center;
-      padding: 1rem;
-      background: #2b6cb0;
+      background: #007bff;
       color: white;
-      font-size: 0.9rem;
+      text-align: center;
+      padding: 10px;
+      font-size: 0.9em;
     }
   </style>
 </head>
 <body>
-  <header>Toko Ida Barokah 🛒</header>
 
-  <div id="promoBox" class="promo">
-    Promo Spesial Hari Ini! 🎉 Dapatkan diskon 10% untuk semua produk.
-  </div>
+  <header>Toko Ida Barokah 🛍️</header>
+  <div class="promo" id="promoArea">✨ Promo Spesial Hari Ini ✨</div>
 
-  <div class="container" id="productList">
-    <!-- Produk akan ditampilkan di sini -->
-  </div>
+  <div class="container" id="produkList"></div>
 
   <footer>© 2025 Toko Ida Barokah</footer>
 
   <script>
-    // Ambil data dari localStorage
-    const products = JSON.parse(localStorage.getItem("products")) || [];
-    const promoText = localStorage.getItem("promoText") || "Promo Spesial Hari Ini! 🎉 Dapatkan diskon 10% untuk semua produk.";
-    
-    // Tampilkan promo
-    document.getElementById("promoBox").innerText = promoText;
-
-    // Render produk
-    const container = document.getElementById("productList");
-    container.innerHTML = "";
-    products.forEach(p => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <h3>${p.nama}</h3>
-        <p>Harga: Rp ${p.harga.toLocaleString()}</p>
-        <p>Satuan: ${p.satuan}</p>
-      `;
-      container.appendChild(card);
-    });
+    function loadProduk() {
+      const data = JSON.parse(localStorage.getItem("produkList") || "[]");
+      const container = document.getElementById("produkList");
+      container.innerHTML = data.map(p => `
+        <div class="card">
+          <img src="${p.gambar || 'https://via.placeholder.com/200'}" alt="${p.nama}">
+          <h3>${p.nama}</h3>
+          <p>Harga: Rp ${p.harga}</p>
+          <p>Satuan: ${p.satuan}</p>
+          ${p.promo ? `<p style="color:red;font-weight:bold;">Promo: ${p.promo}</p>` : ''}
+        </div>
+      `).join("");
+      document.getElementById("promoArea").innerText = data.find(p => p.promo)?.promo || "✨ Promo Spesial Hari Ini ✨";
+    }
+    loadProduk();
   </script>
 </body>
 </html>
+
