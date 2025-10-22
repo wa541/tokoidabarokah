@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Toko Ida Barokah 🛍️</title>
+
+  <!-- Anti-cache supaya HP selalu ambil versi terbaru -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
   <style>
     body { font-family: 'Poppins', sans-serif; margin:0; background:#f8fafc; color:#333;}
     header { background: linear-gradient(90deg,#007bff,#00bfff); color:white; text-align:center; padding:20px; font-size:1.5em; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.2);}
@@ -22,7 +28,7 @@
   <footer>© 2025 Toko Ida Barokah</footer>
 
   <script>
-    // Auto-refresh tiap 10 detik untuk menampilkan versi terbaru
+    // Auto-refresh setiap 10 detik untuk tampilkan data terbaru
     setInterval(() => {
       const latest = JSON.parse(localStorage.getItem("produkList") || "[]");
       const container = document.getElementById("produkList");
@@ -35,9 +41,8 @@
           ${p.promo ? `<p style="color:red;font-weight:bold;">Promo: ${p.promo}</p>` : ''}
         </div>
       `).join("");
-      // Update area promo jika ada
       document.getElementById("promoArea").innerText = latest.find(p=>p.promo)?.promo || "✨ Promo Spesial Hari Ini ✨";
-    }, 10000); // setiap 10 detik
+    }, 10000); // refresh tiap 10 detik
 
     // Load awal
     const loadProduk = () => {
